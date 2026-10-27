@@ -8,7 +8,7 @@ This repository walks you through the entire GenAI development lifecycle — fro
 
 ## 🏗️ End-to-End System Architecture
 
-```mermaid
+mermaid
 flowchart TD
     subgraph DataIngestion["1. Data Ingestion & Splitting"]
         D1[Plain Text / speech.txt] --> L1[TextLoader]
