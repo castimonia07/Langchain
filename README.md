@@ -8,46 +8,46 @@ This repository walks you through the entire GenAI development lifecycle — fro
 
 ## 🏗️ End-to-End System Architecture
 
-mermaid
+```mermaid
 flowchart TD
     subgraph DataIngestion["1. Data Ingestion & Splitting"]
-        D1[Plain Text / speech.txt] --> L1[TextLoader]
-        D2[PDF / attention.pdf] --> L2[PyPDFLoader]
-        D3[Web Articles / HTML] --> L3[WebBaseLoader / HTMLHeaderTextSplitter]
-        D4[ArXiv / Wikipedia] --> L4[ArxivLoader / WikipediaLoader]
-        D5[JSON / OpenAPI Specs] --> L5[RecursiveJsonSplitter]
-        L1 & L2 & L3 & L4 & L5 --> Splitter[RecursiveCharacterTextSplitter]
+        D1["Plain Text / speech.txt"] --> L1["TextLoader"]
+        D2["PDF / attention.pdf"] --> L2["PyPDFLoader"]
+        D3["Web Articles / HTML"] --> L3["WebBaseLoader / HTMLHeaderTextSplitter"]
+        D4["ArXiv / Wikipedia"] --> L4["ArxivLoader / WikipediaLoader"]
+        D5["JSON / OpenAPI Specs"] --> L5["RecursiveJsonSplitter"]
+        L1 & L2 & L3 & L4 & L5 --> Splitter["RecursiveCharacterTextSplitter"]
     end
 
     subgraph VectorEcosystem["2. Embeddings & Vector Storage"]
-        Splitter --> EmbedChoice{Choose Embeddings}
-        EmbedChoice -->|Cloud API| E1[OpenAI text-embedding-3-large]
-        EmbedChoice -->|Local Open-Source| E2[HuggingFace all-MiniLM-L6-v2]
-        EmbedChoice -->|Self-Hosted Offline| E3[Ollama nomic-embed-text]
-        E1 & E2 & E3 --> VStore{Vector Store}
-        VStore -->|In-Memory / File Index| VS1[(FAISS Index)]
-        VStore -->|Persisted SQLite + HNSW| VS2[(ChromaDB)]
+        Splitter --> EmbedChoice{"Choose Embeddings"}
+        EmbedChoice -->|Cloud API| E1["OpenAI text-embedding-3-large"]
+        EmbedChoice -->|Local Open-Source| E2["HuggingFace all-MiniLM-L6-v2"]
+        EmbedChoice -->|Self-Hosted Offline| E3["Ollama nomic-embed-text"]
+        E1 & E2 & E3 --> VStore{"Vector Store"}
+        VStore -->|In-Memory / File Index| VS1[("FAISS Index")]
+        VStore -->|Persisted SQLite + HNSW| VS2[("ChromaDB")]
     end
 
     subgraph RetrievalRAG["3. Advanced Retrieval & Context"]
-        VS1 & VS2 --> Retriever[VectorStoreRetriever / MMR]
-        Retriever --> HRetriever[create_history_aware_retriever]
-        History[(ChatMessageHistory Store)] <-->|Session History| HRetriever
-        HRetriever --> DocChain[create_stuff_documents_chain]
+        VS1 & VS2 --> Retriever["VectorStoreRetriever / MMR"]
+        Retriever --> HRetriever["create_history_aware_retriever"]
+        History[("ChatMessageHistory Store")] <-->|Session History| HRetriever
+        HRetriever --> DocChain["create_stuff_documents_chain"]
     end
 
     subgraph LLMOrchestration["4. LCEL & Model Execution"]
-        DocChain --> LCEL[LCEL Pipeline: Prompt | LLM | StrOutputParser]
-        LCEL --> Models{LLM Providers}
-        Models --> M1[Groq Cloud: LLaMA3 / Qwen]
-        Models --> M2[Google Gemini: 1.5 Flash / Pro]
-        Models --> M3[Ollama Local: Gemma 2B / Mistral]
+        DocChain --> LCEL["LCEL Pipeline: Prompt → LLM → StrOutputParser"]
+        LCEL --> Models{"LLM Providers"}
+        Models --> M1["Groq Cloud: LLaMA3 / Qwen"]
+        Models --> M2["Google Gemini: 1.5 Flash / Pro"]
+        Models --> M3["Ollama Local: Gemma 2B / Mistral"]
     end
 
     subgraph ObservabilityDeployment["5. Deployment & Observability"]
-        LCEL --> StreamlitApp[Streamlit Web App: app.py]
-        LCEL --> LangServeApp[FastAPI + LangServe: LCEL/serve.py]
-        LCEL -.->|Tracing & Monitoring| LangSmith[[LangSmith Observability]]
+        LCEL --> StreamlitApp["Streamlit Web App: app.py"]
+        LCEL --> LangServeApp["FastAPI + LangServe: LCEL/serve.py"]
+        LCEL -.->|Tracing & Monitoring| LangSmith[["LangSmith Observability"]]
     end
 ```
 
